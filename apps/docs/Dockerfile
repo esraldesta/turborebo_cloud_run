@@ -40,7 +40,8 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 
-EXPOSE 3000
+# Expose the correct port for Cloud Run
+EXPOSE 8080
 
 # Don't run production as root for security reasons
 RUN addgroup --system --gid 1001 nodejs
