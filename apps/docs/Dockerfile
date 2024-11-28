@@ -57,5 +57,8 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/docs/.next/standalone ./
 COPY --from=installer --chown=nextjs:nodejs /app/apps/docs/.next/static ./apps/docs/.next/static 
 COPY --from=installer --chown=nextjs:nodejs /app/apps/docs/public ./apps/docs/public
 
+# Print out the environment variables for debugging
+RUN echo "PORT: $PORT"
+
 # Run the default Next.js start command (using the PORT environment variable)
 CMD ["npm", "run", "start"]
