@@ -29,7 +29,9 @@ COPY .gitignore .gitignore
 
 # Copy the pruned lockfile and other necessary files from the builder stage
 COPY --from=builder /app/out/json/ .
-COPY --from=builder /app/out/yarn.lock ./yarn.lock  # If you have a yarn.lock, but we'll use npm
+# If you have a yarn.lock, but we'll use npm
+COPY --from=builder /app/out/yarn.lock ./yarn.lock  
+
 
 # Install dependencies using npm
 RUN npm install
