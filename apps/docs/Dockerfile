@@ -40,9 +40,6 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 
-# Expose port 8080 (Cloud Run will map this to an available port)
-EXPOSE 8080
-
 # Don't run production as root for security reasons
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
