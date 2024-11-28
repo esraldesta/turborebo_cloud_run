@@ -15,7 +15,6 @@ RUN npm install -g turbo
 COPY . .
 
 # Generate a partial monorepo with a pruned lockfile for a target workspace.
-# Assuming "docs" is the name entered in the project's package.json: { name: "docs" }
 RUN turbo prune docs --docker
 
 # The installer stage to install dependencies
@@ -30,7 +29,6 @@ COPY .gitignore .gitignore
 # Copy the pruned lockfile and other necessary files from the builder stage
 COPY --from=builder /app/out/json/ .
 
-
 # Install dependencies using npm
 RUN npm install
 
@@ -42,7 +40,9 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 
+# Expose port 8080 (Cloud Run will map this to an available port)
 EXPOSE 8080
+
 # Don't run production as root for security reasons
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -53,10 +53,9 @@ COPY --from=installer /app/apps/docs/next.config.js .
 COPY --from=installer /app/apps/docs/package.json .
 
 # Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=installer --chown=nextjs:nodejs /app/apps/docs/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs /app/apps/docs/.next/static ./apps/docs/.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/docs/.next/standalone ./ 
+COPY --from=installer --chown=nextjs:nodejs /app/apps/docs/.next/static ./apps/docs/.next/static 
 COPY --from=installer --chown=nextjs:nodejs /app/apps/docs/public ./apps/docs/public
 
-# Set the default command to start the app using Node.js
-CMD ["node", "apps/docs/server.js"]
+# Run the default Next.js start command (using the PORT environment variable)
+CMD ["npm", "run", "start"]
