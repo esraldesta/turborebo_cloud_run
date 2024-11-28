@@ -40,6 +40,8 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 
+EXPOSE 3000
+
 # Don't run production as root for security reasons
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
